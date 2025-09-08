@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Vue 3 CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body class="bg-gray-100">
+    <div id="app">
+        <div class="container mx-auto px-4 py-8">
+            <!-- Header -->
+            <header class="text-center mb-8">
+                <h1 class="text-4xl font-bold text-blue-600 mb-2">{{ title }}</h1>
+                <p class="text-gray-600">{{ subtitle }}</p>
+            </header>
+
+            <!-- Main Content -->
+            <main class="max-w-2xl mx-auto">
+                <todo-list-component></todo-list-component>
+                
+            </main>
+
+            <!-- Footer -->
+            <footer class="text-center mt-8 text-gray-500">
+                <p>Built with Vue 3 and Tailwind CSS</p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Include the separate app.js file -->
+    <script src="js/app.js" type="module"></script>
+</body>
+</html>

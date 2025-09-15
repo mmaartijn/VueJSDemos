@@ -11,7 +11,7 @@
     let count = ref(props.initialCount);
 
     onMounted(() => {
-        alert(count.value);
+        // alert(count.value);
     });
 
     function increment() {

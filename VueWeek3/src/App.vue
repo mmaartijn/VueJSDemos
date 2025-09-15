@@ -13,15 +13,10 @@ import CounterComponent from './components/counterComponent.vue';
   <h1>{{ message }}</h1>
   <input v-model="message" />
   <CounterComponent :initialCount="5" />
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
-
+  <hr/>
+  <RouterLink to="/">Home</RouterLink> |
+  <RouterLink to="/about">About</RouterLink>
   <RouterView />
-
-  <RouterLink to="/about">About</RouterLink> |
-  <RouterLink to="/">Home</RouterLink>
 </template>
 
 <style scoped></style>

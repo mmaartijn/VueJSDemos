@@ -12,18 +12,17 @@
         }
     );
 
-    axios.get('http://localhost:1234/forecast')
+    axios.get('/api/people/1')
         .then(response => {
-            myData.value = response.data.weatherreport;
+            myData.value = response.data;
         });
-
     
 </script>
 
 <template>
-    <h1>{{ myData.title }}</h1>
-    <p>{{ myData.summary }}</p>
-    <p>{{ myData.text }}</p>
+    <h1>{{ myData.name }}</h1>
+    <p>{{ myData.hair_color }}</p>
+    <p>{{ myData.birth_year }}</p>
 </template>
 
 <style scoped>

@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uitleg Webtoegankelijkheid & ARIA</title>
+    <style>
+        /* --- Algemene Stijlen --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            background-color: #f9f9f9;
+        }
+
+        h1, h2, h3 {
+            line-height: 1.2;
+            color: #1a202c;
+        }
+        
+        h1 {
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 0.5rem;
+        }
+
+        h2 {
+            margin-top: 2.5rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 0.3rem;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #eee;
+            margin: 2rem 0;
+        }
+
+        code {
+            background-color: #e2e8f0;
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background-color: #2d3748;
+            color: #f8f8f2;
+            padding: 1em;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        
+        pre code {
+            background-color: transparent;
+            padding: 0;
+        }
+
+        a {
+            color: #3182ce;
+        }
+
+        /* --- Voorbeeld Containers --- */
+        .example-container {
+            border: 1px solid #ddd;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            background-color: #fff;
+        }
+
+        .good {
+            border-left: 6px solid #48bb78; /* groen */
+        }
+        
+        .good h3::before {
+            content: '✓ Goed: ';
+            color: #48bb78;
+        }
+
+        .bad {
+            border-left: 6px solid #f56565; /* rood */
+        }
+        
+        .bad h3::before {
+            content: '✗ Slecht: ';
+            color: #f56565;
+        }
+        
+        .explanation {
+            font-style: italic;
+            color: #555;
+            margin-top: 1rem;
+            border-top: 1px dashed #ccc;
+            padding-top: 1rem;
+        }
+
+        /* --- Specifieke Voorbeeld Stijlen --- */
+        
+        /* Skip Link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #1a202c;
+            color: white;
+            padding: 8px;
+            z-index: 100;
+            transition: top 0.3s;
+        }
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Uitklapbare lijst */
+        .collapsible-trigger {
+            background-color: #edf2f7;
+            border: 1px solid #cbd5e0;
+            padding: 0.5rem 1rem;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 4px;
+        }
+        .collapsible-trigger:hover {
+            background-color: #e2e8f0;
+        }
+        .collapsible-trigger::after {
+            content: ' ▼';
+            float: right;
+        }
+        .collapsible-trigger[aria-expanded="true"]::after {
+            content: ' ▲';
+        }
+        .collapsible-content {
+            display: none;
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+        }
+        .collapsible-content.show {
+            display: block;
+        }
+        
+        /* Afbeeldingen */
+        img {
+            max-width: 150px;
+            height: auto;
+            border: 1px solid #ccc;
+            display: block;
+            margin-top: 0.5rem;
+        }
+        
+        /* Formulier */
+        input[type="text"] {
+            border: 1px solid #ccc;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+        
+    </style>
+</head>
+<body>
+
+    <a href="#main-content" class="skip-link">Spring naar hoofdinhoud</a>
+
+    <header>
+        <h1>Uitleg Webtoegankelijkheid & ARIA ✨</h1>
+        <p>Deze pagina demonstreert de basisprincipes van webtoegankelijkheid (a11y) en het gebruik van <strong>ARIA</strong> (Accessible Rich Internet Applications). Voor elk onderwerp zie je een goed en een slecht voorbeeld. Gebruik een screenreader en de developer tools ('Accessibility' tab) om het verschil te ervaren.</p>
+    </header>
+
+    <main id="main-content">
+
+        <hr>
+
+        <h2>1. HTML Landmarks (Pagina Structuur)</h2>
+        <p>Landmarks zijn de belangrijkste bouwstenen van je pagina. Ze geven structuur en maken het voor screenreaders mogelijk om direct naar belangrijke delen te navigeren, zoals de navigatie of de hoofdinhoud.</p>
+        
+        <section>
+            <h3>Header: De "banner" van je pagina</h3>
+            <div class="example-container good">
+                <h3><code>&lt;header&gt;</code></h3>
+                <pre><code>&lt;header&gt;
+  &lt;h1&gt;Mijn Website&lt;/h1&gt;
+&lt;/header&gt;</code></pre>
+                <div class="explanation">
+                    <strong>Waarom is dit goed?</strong> De <code>&lt;header&gt;</code> tag definieert een semantisch blok voor inleidende content of navigatielinks. Een screenreader herkent dit als de "banner" landmark, waardoor gebruikers hier direct naartoe kunnen springen.
+                </div>
+            </div>
+            <div class="example-container bad">
+                <h3><code>&lt;div class="header"&gt;</code></h3>
+                <pre><code>&lt;div class="header"&gt;
+  &lt;h1&gt;Mijn Website&lt;/h1&gt;
+&lt;/div&gt;</code></pre>
+                <div class="explanation">
+                    <strong>Waarom is dit slecht?</strong> Een <code>&lt;div&gt;</code> heeft geen semantische betekenis. Voor een screenreader is dit gewoon een anoniem blok, geen herkenbare "banner". De gebruiker mist hierdoor een belangrijk navigatiepunt.
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h3>Nav: De hoofdnavigatie</h3>
+            <div class="example-container good">
+                <h3><code>&lt;nav&gt;</code></h3>
+                <pre><code>&lt;nav aria-label="Hoofdmenu"&gt;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href="/"&gt;Home&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="/over"&gt;Over Ons&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/nav&gt;</code></pre>
+                <div class="explanation">
+                    <strong>Waarom is dit goed?</strong> De <code>&lt;nav&gt;</code> tag creëert een "navigation" landmark. De <code>aria-label</code> geeft een duidelijke naam aan dit navigatieblok (nuttig als je er meerdere hebt, zoals een hoofdmenu en een footermenu).
+                </div>
+            </div>
+            <div class="example-container bad">
+                <h3><code>&lt;div&gt;</code> voor navigatie</h3>
+                <pre><code>&lt;div&gt;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href="/"&gt;Home&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="/over"&gt;Over Ons&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+                <div class="explanation">
+                    <strong>Waarom is dit slecht?</strong> Zonder de <code>&lt;nav&gt;</code> tag is dit voor een screenreader slechts een lijst met links, niet een samenhangend navigatieblok. De gebruiker kan er niet makkelijk naartoe navigeren.
+                </div>
+            </div>
+        </section>
+        
+        <section>
+            <h3>Sections & Articles: Inhoud groeperen</h3>
+            <p><code>&lt;section&gt;</code> groepeert gerelateerde content. <code>&lt;article&gt;</code> is voor opzichzelfstaande content die je ergens anders zou kunnen hergebruiken (bv. een blogpost, een product).</p>
+            <div class="example-container good">
+                <h3><code>&lt;section&gt;</code> en <code>&lt;article&gt;</code></h3>
+                <pre><code>&lt;section aria-labelledby="nieuws-titel"&gt;
+  &lt;h2 id="nieuws-titel"&gt;Laatste Nieuws&lt;/h2&gt;
+  &lt;article&gt;
+    &lt;h3&gt;Titel van artikel 1&lt;/h3&gt;
+    &lt;p&gt;Inhoud...&lt;/p&gt;
+  &lt;/article&gt;
+&lt;/section&gt;</code></pre>
+                <div class="explanation">
+                    <strong>Waarom is dit goed?</strong> De structuur is logisch. De <code>&lt;section&gt;</code> heeft een toegankelijke naam via <code>aria-labelledby</code>, die verwijst naar de kop. De <code>&lt;article&gt;</code> definieert een duidelijke, opzichzelfstaande eenheid.
+                </div>
+            </div>
+            <div class="example-container bad">
+                <h3><code>&lt;div&gt;</code> voor alles</h3>
+                <pre><code>&lt;div class="nieuws"&gt;
+  &lt;div class="titel"&gt;Laatste Nieuws&lt;/div&gt;
+  &lt;div class="artikel"&gt;
+    &lt;b&gt;Titel van artikel 1&lt;/b&gt;
+    &lt;p&gt;Inhoud...&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+                <div class="explanation">
+                    <strong>Waarom is dit slecht?</strong> "Div-itis". Er is geen hiërarchie of betekenis. Een screenreader ziet alleen maar anonieme blokken. Het gebruik van <code>&lt;b&gt;</code> of <code>&lt;div class="titel"&gt;</code> in plaats van een echte kop (<code>&lt;h2&gt;</code>) vernietigt de paginastructuur.
+                </div>
+            </div>
+        </section>
+        
+        <section>
+            <h3>Aside & Footer: Extra en afsluitende content</h3>
+            <p>Een <code>&lt;aside&gt;</code> is voor gerelateerde maar losstaande content (zoals een sidebar). Een <code>&lt;footer&gt;</code> is voor de afsluiting van een pagina of sectie.</p>
+            <div class="example-container good">
+                <h3><code>&lt;aside&gt;</code> en <code>&lt;footer&gt;</code></h3>
+                <pre><code>&lt;aside&gt;
+  &lt;h3&gt;Gerelateerde links&lt;/h3&gt;
+  &lt;!-- links --&gt;
+&lt;/aside&gt;
+
+&lt;footer&gt;
+  &lt;p&gt;&copy; 2025 Mijn Website&lt;/p&gt;
+&lt;/footer&gt;</code></pre>
+                <div class="explanation">
+                    <strong>Waarom is dit goed?</strong> Dit creëert de "complementary" (<code>&lt;aside&gt;</code>) en "contentinfo" (<code>&lt;footer&gt;</code>) landmarks. Gebruikers kunnen deze specifieke gebieden makkelijk vinden of juist overslaan.
+                </div>
+            </div>
+            <div class="example-container bad">
+                 <h3><code>&lt;div class="sidebar"&gt;</code> en <code>&lt;div class="footer"&gt;</code></h3>
+                 <pre><code>&lt;div class="sidebar"&gt;
+  &lt;h3&gt;Gerelateerde links&lt;/h3&gt;
+&lt;/div&gt;
+
+&lt;div class="footer"&gt;
+  &lt;p&gt;&copy; 2025 Mijn Website&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+                <div class="explanation">
+                    <strong>Waarom is dit slecht?</strong> Wederom missen de semantische landmarks. De visuele styling is er wel, maar de onderliggende structuur voor ondersteunende technologie ontbreekt volledig.
+                </div>
+            </div>
+        </section>
+
+        <hr>
+
+        <h2>2. Inhoud en Interactie</h2>
+        <p>Na de paginastructuur is de toegankelijkheid van de content zelf cruciaal. Dit gaat over koppen, afbeeldingen, formulieren en interactieve elementen.</p>
+
+        <section>
+            <h3>Kopstructuur (Heading Structure)</h3>
+            <p>Koppen (<code>&lt;h1&gt;</code> t/m <code>&lt;h6&gt;</code>) vormen de ruggengraat van je content. Screenreader-gebruikers navigeren vaak via de koppenlijst om een overzicht van de pagina te krijgen.</p>
+            <div class="example-container good">
+                <h3>Logische volgorde</h3>
+                <pre><code>&lt;h1&gt;Hoofdtitel Pagina&lt;/h1&gt;
+&lt;h2&gt;Eerste Sectie&lt;/h2&gt;
+  &lt;h3&gt;Sub-sectie A&lt;/h3&gt;
+  &lt;h3&gt;Sub-sectie B&lt;/h3&gt;
+&lt;h2&gt;Tweede Sectie&lt;/h2&gt;</code></pre>
+                <div class="explanation">
+                    <strong>Waarom is dit goed?</strong> De hiërarchie is correct. Er is één <code>&lt;h1&gt;</code> en de niveaus worden niet overgeslagen. Dit creëert een duidelijke en logische structuur, als een inhoudsopgave.
+                </div>
+            </div>
+            <div class="example-container bad">
+                <h3>Niveaus overslaan en styling misbruiken</h3>
+                <pre><code>&lt;h1&gt;Hoofdtitel Pagina&lt;/h1&gt;
+&lt;h4&gt;Een titel die er kleiner uitziet&lt;/h4&gt;
+&lt;p style="font-size: 24px; font-weight: bold;"&gt;Dit is geen kop!&lt;/p&gt;
+&lt;h2&gt;Nog een sectie&lt;/h2&gt;</code></pre>
+                <div class="explanation">
+                    <strong>Waarom is dit slecht?</strong> Van <code>&lt;h1&gt;</code> naar <code>&lt;h4&gt;</code> is een sprong die de structuur breekt. Een paragraaf stylen als een kop is nog erger: het ziet eruit als een kop, maar is onzichtbaar in de koppenlijst van een screenreader.
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h3>Alternatieve Tekst voor Afbeeldingen</h3>
+            <p>Het <code>alt</code>-attribuut beschrijft de inhoud en functie van een afbeelding voor mensen die deze niet kunnen zien.</p>
+            <div class="example-container good">
+                <h3>Beschrijvende <code>alt</code>-tekst</h3>
+                <img src="https://placehold.co/200x100/3182ce/white?text=Logo" alt="Logo van Google">
+                <pre><code>&lt;img src="logo.png" alt="Logo van Google"&gt;</code></pre>
+                <pre><code>&lt;!-- Voor puur decoratieve afbeeldingen: --&gt;
+&lt;img src="sierlijn.png" alt=""&gt;</code></pre>
+                <div class="explanation">
+                    <strong>Waarom is dit goed?</strong> De <code>alt</code>-tekst is beknopt en beschrijft wat de afbeelding voorstelt. Als een afbeelding puur decoratief is, is een lege <code>alt=""</code> correct; de screenreader slaat hem dan over.
+                </div>
+            </div>
+            <div class="example-container bad">
+                <h3>Ontbrekende of nutteloze <code>alt</code>-tekst</h3>
+                <img src="https://placehold.co/200x100/f56565/white?text=Afbeelding" alt="image01.jpg">
+                <pre><code>&lt;!-- Slecht: de bestandsnaam als alt-tekst --&gt;
+&lt;img src="DSC_0012.jpg" alt="DSC_0012.jpg"&gt;
+
+&lt;!-- Slechter: geen alt-attribuut --&gt;
+&lt;img src="logo.png"&gt;</code></pre>
+                <div class="explanation">
+                    <strong>Waarom is dit slecht?</strong> De bestandsnaam zegt niets over de inhoud. Als het <code>alt</code>-attribuut volledig ontbreekt, leest de screenreader vaak de bestandsnaam voor, wat verwarrend is.
+                </div>
+            </div>
+        </section>
+        
+        <section>
+            <h3>Labels voor Formulierelementen</h3>
+            <p>Een <code>&lt;label&gt;</code> koppelt tekst aan een invoerveld, wat essentieel is voor screenreaders en ook de klikbaarheid verbetert.</p>
+            <div class="example-container good">
+                <h3><code>&lt;label for="..."&gt;</code></h3>
+                <label for="username">Gebruikersnaam:</label>
+                <input type="text" id="username" name="username">
+                <pre><code>&lt;label for="username"&gt;Gebruikersnaam:&lt;/label&gt;
+&lt;input type="text" id="username" name="username"&gt;</code></pre>
+                <div class="explanation">
+                    <strong>Waarom is dit goed?</strong> Het <code>for</code>-attribuut van het label is gekoppeld aan de <code>id</code> van het invoerveld. Nu weet de screenreader precies welk label bij welk veld hoort. Als je op het label klikt, krijgt het invoerveld de focus.
+                </div>
+            </div>
+            <div class="example-container bad">
+                <h3>Losse tekst of een placeholder</h3>
+                <p>Gebruikersnaam:</p>
+                <input type="text" name="username_bad" placeholder="Gebruikersnaam">
+                <pre><code>&lt;p&gt;Gebruikersnaam:&lt;/p&gt;
+&lt;input type="text" name="username_bad" placeholder="Gebruikersnaam"&gt;</code></pre>
+                <div class="explanation">
+                    <strong>Waarom is dit slecht?</strong> Er is geen programmatische koppeling tussen de tekst en het veld. Een placeholder is geen vervanging voor een label; deze verdwijnt zodra de gebruiker begint te typen en wordt niet altijd goed voorgelezen door screenreaders.
+                </div>
+            </div>
+        </section>
+
+        <hr>
+
+        <h2>3. ARIA en Geavanceerde Toegankelijkheid</h2>
+        <p>ARIA (Accessible Rich Internet Applications) helpt waar standaard HTML tekortschiet, vooral bij complexe, dynamische componenten.</p>
+
+        <section>
+            <h3>Uitklapbare Lijst (Collapsible/Accordion)</h3>
+            <p>Voor interactieve elementen die content tonen of verbergen, moeten we de status (uitgeklapt/ingeklapt) communiceren aan screenreaders.</p>
+            <div class="example-container good">
+                <h3><code>&lt;button&gt;</code> met <code>aria-expanded</code></h3>
+                <ul>
+                    <li>
+                        <button class="collapsible-trigger" aria-expanded="false" aria-controls="faq1-content" id="faq1-trigger">
+                            Vraag 1: Wat is ARIA?
+                        </button>
+                        <div role="region" id="faq1-content" class="collapsible-content" aria-labelledby="faq1-trigger">
+                            <p>ARIA staat voor Accessible Rich Internet Applications. Het is een set attributen die je aan HTML kunt toevoegen om de toegankelijkheid te verbeteren.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <button class="collapsible-trigger" aria-expanded="false" aria-controls="faq2-content" id="faq2-trigger">
+                            Vraag 2: Waarom is dit belangrijk?
+                        </button>
+                        <div role="region" id="faq2-content" class="collapsible-content" aria-labelledby="faq2-trigger">
+                            <p>Het zorgt ervoor dat mensen met een beperking, die afhankelijk zijn van technologie zoals screenreaders, ook complexe webapplicaties kunnen gebruiken.</p>
+                        </div>
+                    </li>
+                </ul>
+                <pre><code>&lt;button aria-expanded="false" aria-controls="content-id"&gt;
+  Toggle
+&lt;/button&gt;
+&lt;div id="content-id"&gt;...&lt;/div&gt;</code></pre>
+                <div class="explanation">
+                    <strong>Waarom is dit goed?</strong> We gebruiken een <code>&lt;button&gt;</code>, wat semantisch correct is voor een actie. Het <code>aria-expanded</code> attribuut vertelt een screenreader of de content zichtbaar is ("true") of verborgen ("false"). De status wordt met JavaScript bijgewerkt. <code>aria-controls</code> linkt de knop aan de content die hij bestuurt.
+                </div>
+            </div>
+            <div class="example-container bad">
+                <h3>Klikbare <code>&lt;div&gt;</code> zonder status</h3>
+                <div style="cursor: pointer; font-weight: bold; padding: 0.5rem; background: #eee;">Vraag 1 (klik hier)</div>
+                <div>Antwoord op de vraag...</div>
+                <pre><code>&lt;div onclick="toggle()"&gt;Toggle&lt;/div&gt;
+&lt;div&gt;...&lt;/div&gt;</code></pre>
+                <div class="explanation">
+                    <strong>Waarom is dit slecht?</strong> Een <code>&lt;div&gt;</code> is niet focusbaar met het toetsenbord en wordt niet herkend als een interactief element. Een screenreader weet niet dat erop geklikt kan worden, en er is geen enkele indicatie van de status (open of gesloten).
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h3>Knoppen en Berichten (<code>data-</code> vs <code>aria-</code>)</h3>
+            <p>Soms wil je extra informatie aan een element koppelen. Het is cruciaal om het juiste attribuut voor de juiste taak te gebruiken.</p>
+            <div class="example-container good">
+                <h3><code>aria-label</code> of <code>aria-describedby</code></h3>
+                <button aria-label="Sluit venster">X</button>
+                <br><br>
+                <p id="save-desc">Je wijzigingen worden permanent opgeslagen.</p>
+                <button aria-describedby="save-desc">Opslaan</button>
+                <pre><code>&lt;!-- Voor een korte, vervangende tekst --&gt;
+&lt;button aria-label="Sluit venster"&gt;X&lt;/button&gt;
+
+&lt;!-- Voor een langere, extra beschrijving --&gt;
+&lt;p id="save-desc"&gt;Je wijzigingen worden opgeslagen.&lt;/p&gt;
+&lt;button aria-describedby="save-desc"&gt;Opslaan&lt;/button&gt;</code></pre>
+                <div class="explanation">
+                    <strong>Waarom is dit goed?</strong> <code>aria-label</code> overschrijft de tekstinhoud van de knop voor screenreaders (ze horen "Sluit venster", niet "X"). <code>aria-describedby</code> linkt naar een ander element voor een extra beschrijving, die na de knoptekst wordt voorgelezen ("Opslaan. Je wijzigingen worden opgeslagen.").
+                </div>
+            </div>
+            <div class="example-container bad">
+                <h3><code>data-message</code> gebruiken voor screenreaders</h3>
+                <button data-message="Dit bericht is onzichtbaar voor screenreaders">Info</button>
+                <pre><code>&lt;button data-message="Dit is info voor de developer"&gt;
+  Info
+&lt;/button&gt;</code></pre>
+                <div class="explanation">
+                    <strong>Waarom is dit slecht?</strong> <code>data-*</code> attributen zijn bedoeld voor ontwikkelaars om data op te slaan voor CSS of JavaScript. Screenreaders negeren deze attributen volledig. De extra context is dus volledig onbereikbaar voor de gebruiker.
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h3>Focus Management (<code>tabindex</code>)</h3>
+            <p><code>tabindex</code> beheert of een element focus kan krijgen met het toetsenbord. Gebruik het met zorg!</p>
+            <div class="example-container good">
+                <h3><code>tabindex="0"</code> en <code>tabindex="-1"</code></h3>
+                <div tabindex="0" style="padding: 0.5rem; border: 1px solid blue;">
+                    Deze div is focusbaar met Tab (tabindex="0").
+                </div>
+                <pre><code>&lt;!-- Maakt een niet-interactief element focusbaar --&gt;
+&lt;div tabindex="0"&gt;...&lt;/div&gt;
+
+&lt;!-- Haalt een element uit de tab-volgorde, maar maakt het focusbaar met JS --&gt;
+&lt;div tabindex="-1"&gt;...&lt;/div&gt;</code></pre>
+                <div class="explanation">
+                    <strong>Waarom is dit goed?</strong> <code>tabindex="0"</code> voegt een element toe aan de natuurlijke tab-volgorde. Dit is nuttig voor custom interactieve componenten. <code>tabindex="-1"</code> is handig om de focus programmatisch (met JavaScript) naar een element te verplaatsen, zoals een foutmelding na het verzenden van een formulier.
+                </div>
+            </div>
+            <div class="example-container bad">
+                <h3>Positieve <code>tabindex</code> waarden</h3>
+                <input type="text" tabindex="2" placeholder="Ik ben tweede">
+                <input type="text" tabindex="1" placeholder="Ik ben eerste">
+                <input type="text" tabindex="3" placeholder="Ik ben derde">
+                <pre><code>&lt;input type="text" tabindex="2"&gt;
+&lt;input type="text" tabindex="1"&gt;
+&lt;input type="text" tabindex="3"&gt;</code></pre>
+                <div class="explanation">
+                    <strong>Waarom is dit slecht?</strong> Een <code>tabindex</code> groter dan 0 forceert een onnatuurlijke en vaak verwarrende tab-volgorde. Dit breekt de logische flow van de pagina. De tab-volgorde moet altijd de visuele leesvolgorde volgen.
+                </div>
+            </div>
+        </section>
+
+    </main>
+    
+    <hr>
+    
+    <footer>
+        <p>&copy; 2025 - Een leermiddel voor webtoegankelijkheid.</p>
+    </footer>
+
+    <script>
+        // --- JavaScript voor de uitklapbare lijst ---
+        document.addEventListener('DOMContentLoaded', function () {
+            // Selecteer alle knoppen die content moeten tonen/verbergen
+            const triggers = document.querySelectorAll('.collapsible-trigger');
+
+            triggers.forEach(button => {
+                button.addEventListener('click', function () {
+                    // Haal de ID op van de content die we moeten tonen/verbergen
+                    const contentId = this.getAttribute('aria-controls');
+                    const content = document.getElementById(contentId);
+
+                    // Controleer de huidige status
+                    const isExpanded = this.getAttribute('aria-expanded') === 'true';
+
+                    // Keer de status om: true wordt false, en vice versa
+                    this.setAttribute('aria-expanded', !isExpanded);
+
+                    // Toggle de 'show' class op het content-element
+                    if (content) {
+                        content.classList.toggle('show');
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

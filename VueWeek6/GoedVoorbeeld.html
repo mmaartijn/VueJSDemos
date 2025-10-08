@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bezorgd, ook thuis.nl - De Toegankelijke Versie</title>
+    <script src="https://cdn-tailwindcss.vercel.app/"></script>
+    <style>
+        /* === TAB-SKIP: Stijl voor de skip link === */
+        .skip-link {
+            position: absolute;
+            top: -50px; /* Start buiten het scherm */
+            left: 0;
+            background: #1a202c;
+            color: white;
+            padding: 8px 12px;
+            z-index: 100;
+            transition: top 0.3s;
+        }
+        .skip-link:focus {
+            top: 10px;
+            left: 10px;
+        }
+        /* Stijl voor de uitklapbare FAQ items */
+        .collapsible-content {
+            display: none; /* Verberg de content standaard */
+        }
+        /* Stijl voor de custom tooltip */
+        .group:hover .tooltip, .group:focus-within .tooltip {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <!-- === TAB-SKIP / HTML LANDMARK (Skip Link): Spring direct naar de hoofdinhoud === -->
+    <a href="#main-content" class="skip-link rounded">Spring naar hoofdinhoud</a>
+
+    <!-- === HEADER / HTML LANDMARK (Banner) === -->
+    <header role="banner" class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <!-- === HEADING STRUCTURE: De H1 is de hoofdtitel van de pagina === -->
+            <h1 class="text-2xl font-bold text-orange-500">
+                <a href="#" class="hover:text-orange-600">Bezorgd, ook thuis.nl</a>
+            </h1>
+            <!-- === NAV / HTML LANDMARK (Navigation) === -->
+            <nav role="navigation" aria-label="Hoofdmenu">
+                <ul class="flex items-center space-x-6">
+                    <li><a href="#" class="text-gray-700 hover:text-orange-500">Inloggen</a></li>
+                    <li><a href="#" class="text-gray-700 hover:text-orange-500">Hulp</a></li>
+                    <li>
+                        <!-- === DATA-MESSAGE vs ARIA === -->
+                        <!-- 'data-tooltip' is voor custom JS/CSS, niet voor screenreaders. -->
+                        <!-- 'aria-describedby' linkt naar de tekst die screenreaders wél moeten lezen. -->
+                        <div class="relative group">
+                             <button aria-describedby="help-tooltip" data-tooltip="Klik hier voor hulp bij het zoeken" class="p-2 border rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.79 4 4 0 .863-.27 1.66-.744 2.267l-1.148 1.482A7.962 7.962 0 0116 18H8c-1.105 0-2-.895-2-2v-1c0-.494.191-.96.533-1.309l1.695-1.785z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18v.01" /></svg>
+                            </button>
+                            <span id="help-tooltip" role="tooltip" class="tooltip absolute hidden bg-gray-700 text-white text-xs rounded py-1 px-2 top-full mt-2 left-1/2 -translate-x-1/2 whitespace-nowrap">
+                                Krijg hulp bij het zoeken
+                            </span>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- === MAIN / HTML LANDMARK (Hoofdinhoud) === -->
+    <main id="main-content" class="container mx-auto px-4 py-8">
+        
+        <!-- === SECTION / HTML LANDMARK (Region) === -->
+        <section aria-labelledby="search-heading" class="bg-white p-6 rounded-lg shadow-md mb-8">
+            <!-- === HEADING STRUCTURE: H2 is een sub-titel van een sectie === -->
+            <h2 id="search-heading" class="text-3xl font-bold text-center mb-4">Vind restaurants bij jou in de buurt!</h2>
+            <form class="flex flex-col sm:flex-row gap-2">
+                <!-- === LABEL FOR: Koppelt tekst aan het invoerveld === -->
+                <label for="location-search" class="sr-only">Voer je adres in</label>
+                <input type="text" id="location-search" placeholder="Voer je straat en huisnummer in" class="flex-grow p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none">
+                <button type="submit" class="bg-orange-500 text-white font-bold p-3 rounded-md hover:bg-orange-600">
+                    Eten zoeken
+                </button>
+            </form>
+        </section>
+
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- === ASIDE / HTML LANDMARK (Complementary) === -->
+            <aside role="complementary" class="w-full lg:w-1/4">
+                <section aria-labelledby="filter-heading" class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 id="filter-heading" class="text-xl font-bold mb-4">Filters</h2>
+                    
+                    <!-- === TAB-INDEX: Maakt een niet-interactieve container focusbaar === -->
+                    <!-- Dit is nuttig om een groep elementen van een instructie te voorzien -->
+                    <div tabindex="0" class="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500" aria-label="Keukenfilters. Gebruik spatie om een filter te selecteren.">
+                        <!-- === HEADING STRUCTURE: H3 is een sub-sub-titel === -->
+                        <h3 class="font-semibold mb-2">Keuken</h3>
+                        <ul class="space-y-1">
+                            <li><input type="checkbox" id="keuken-pizza" class="mr-2"><label for="keuken-pizza">Pizza</label></li>
+                            <li><input type="checkbox" id="keuken-sushi" class="mr-2"><label for="keuken-sushi">Sushi</label></li>
+                            <li><input type="checkbox" id="keuken-chinees" class="mr-2"><label for="keuken-chinees">Chinees</label></li>
+                        </ul>
+                    </div>
+                </section>
+            </aside>
+
+            <!-- === Restaurantlijst Sectie met Tabs === -->
+            <section aria-labelledby="restaurants-heading" class="w-full lg:w-3/4">
+                <h2 id="restaurants-heading" class="text-2xl font-bold mb-4">Restaurants</h2>
+                
+                <!-- === ACCESSIBLE TABS === -->
+                <div>
+                    <!-- Tab List: Manages the tab buttons -->
+                    <div role="tablist" aria-label="Restaurant Categorieën" class="flex border-b border-gray-300">
+                        <button role="tab" aria-selected="true" aria-controls="panel-italiaans" id="tab-italiaans" class="px-4 py-2 font-semibold text-orange-600 border-b-2 border-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 rounded-t-md">
+                            Italiaans
+                        </button>
+                        <button role="tab" aria-selected="false" aria-controls="panel-aziatisch" id="tab-aziatisch" tabindex="-1" class="px-4 py-2 font-semibold text-gray-500 hover:text-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 rounded-t-md">
+                            Aziatisch
+                        </button>
+                        <button role="tab" aria-selected="false" aria-controls="panel-burgers" id="tab-burgers" tabindex="-1" class="px-4 py-2 font-semibold text-gray-500 hover:text-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 rounded-t-md">
+                            Burgers
+                        </button>
+                         <button role="tab" aria-selected="false" aria-controls="panel-frans" id="tab-frans" tabindex="-1" class="px-4 py-2 font-semibold text-gray-500 hover:text-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 rounded-t-md">
+                            Frans
+                        </button>
+                    </div>
+
+                    <!-- Tab Panels: Contain the content for each tab -->
+                    <div class="mt-4">
+                        <!-- Italiaans Panel -->
+                        <div id="panel-italiaans" role="tabpanel" tabindex="0" aria-labelledby="tab-italiaans" class="space-y-4 focus:outline-none">
+                             <article class="bg-white p-4 rounded-lg shadow-md flex items-center gap-4">
+                                <img src="https://placehold.co/100x100/E97451/FFFFFF?text=Pizza" alt="Pizza van Bella Italia" class="w-24 h-24 rounded-md object-cover">
+                                <div>
+                                    <h3 class="text-lg font-bold"><a href="#" class="text-orange-500 hover:underline">Bella Italia</a></h3>
+                                    <p class="text-gray-600">Pizza, Pasta - Bezorgkosten: €2,50</p>
+                                </div>
+                            </article>
+                            <article class="bg-white p-4 rounded-lg shadow-md flex items-center gap-4">
+                                <img src="https://placehold.co/100x100/E97451/FFFFFF?text=Pasta" alt="Pasta van Mama Roma" class="w-24 h-24 rounded-md object-cover">
+                                <div>
+                                    <h3 class="text-lg font-bold"><a href="#" class="text-orange-500 hover:underline">Mama Roma</a></h3>
+                                    <p class="text-gray-600">Authentieke pasta's - Bezorgkosten: €2,00</p>
+                                </div>
+                            </article>
+                        </div>
+
+                        <!-- Aziatisch Panel (hidden by default) -->
+                        <div id="panel-aziatisch" role="tabpanel" tabindex="0" aria-labelledby="tab-aziatisch" class="hidden space-y-4 focus:outline-none">
+                            <article class="bg-white p-4 rounded-lg shadow-md flex items-center gap-4">
+                                <img src="https://placehold.co/100x100/87CEEB/FFFFFF?text=Sushi" alt="Sushi van Sushi Time" class="w-24 h-24 rounded-md object-cover">
+                                <div>
+                                    <h3 class="text-lg font-bold"><a href="#" class="text-orange-500 hover:underline">Sushi Time</a></h3>
+                                    <p class="text-gray-600">Sushi, Japans - Bezorgkosten: Gratis</p>
+                                </div>
+                            </article>
+                             <article class="bg-white p-4 rounded-lg shadow-md flex items-center gap-4">
+                                <img src="https://placehold.co/100x100/87CEEB/FFFFFF?text=Ramen" alt="Ramen van Tokyo Noodle" class="w-24 h-24 rounded-md object-cover">
+                                <div>
+                                    <h3 class="text-lg font-bold"><a href="#" class="text-orange-500 hover:underline">Tokyo Noodle</a></h3>
+                                    <p class="text-gray-600">Ramen, Gyoza - Bezorgkosten: €1,50</p>
+                                </div>
+                            </article>
+                        </div>
+                        
+                        <!-- Burgers Panel (hidden by default) -->
+                        <div id="panel-burgers" role="tabpanel" tabindex="0" aria-labelledby="tab-burgers" class="hidden space-y-4 focus:outline-none">
+                            <article class="bg-white p-4 rounded-lg shadow-md flex items-center gap-4">
+                                <img src="https://placehold.co/100x100/D2B48C/FFFFFF?text=Burger" alt="Burger van The Burger Barn" class="w-24 h-24 rounded-md object-cover">
+                                <div>
+                                    <h3 class="text-lg font-bold"><a href="#" class="text-orange-500 hover:underline">The Burger Barn</a></h3>
+                                    <p class="text-gray-600">Gourmet Burgers - Bezorgkosten: €3,00</p>
+                                </div>
+                            </article>
+                        </div>
+
+                        <!-- Frans Panel (hidden by default) -->
+                        <div id="panel-frans" role="tabpanel" tabindex="0" aria-labelledby="tab-frans" class="hidden space-y-4 focus:outline-none">
+                             <article class="bg-white p-4 rounded-lg shadow-md flex items-center gap-4">
+                                <img src="https://placehold.co/100x100/6A5ACD/FFFFFF?text=Croissant" alt="Croissant van Le Parisien" class="w-24 h-24 rounded-md object-cover">
+                                <div>
+                                    <h3 class="text-lg font-bold"><a href="#" class="text-orange-500 hover:underline">Le Parisien</a></h3>
+                                    <p class="text-gray-600">Franse Patisserie - Bezorgkosten: €2,00</p>
+                                </div>
+                            </article>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- === COLLAPSIBLE LIST: Gebruikt aria-expanded om staat te communiceren === -->
+        <section aria-labelledby="faq-heading" class="mt-8 bg-white p-6 rounded-lg shadow-md">
+            <h2 id="faq-heading" class="text-2xl font-bold mb-4">Veelgestelde Vragen</h2>
+            <div class="space-y-2">
+                <div>
+                    <h3 class="font-semibold">
+                        <!-- 'aria-expanded' geeft aan of het item ingeklapt (false) of uitgeklapt (true) is. -->
+                        <button id="faq1-button" aria-expanded="false" aria-controls="faq1-content" class="w-full text-left p-2 rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                            Wat zijn de bezorgkosten?
+                        </button>
+                    </h3>
+                    <!-- ROLE="region" maakt dit een herkenbaar gebied dat door de knop wordt beheerd -->
+                    <div id="faq1-content" role="region" aria-labelledby="faq1-button" class="collapsible-content p-2 text-gray-700">
+                        <p>De bezorgkosten verschillen per restaurant en worden duidelijk aangegeven voordat je bestelt.</p>
+                    </div>
+                </div>
+                 <div>
+                    <h3 class="font-semibold">
+                        <button id="faq2-button" aria-expanded="false" aria-controls="faq2-content" class="w-full text-left p-2 rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500">
+                            Hoe kan ik betalen?
+                        </button>
+                    </h3>
+                    <div id="faq2-content" role="region" aria-labelledby="faq2-button" class="collapsible-content p-2 text-gray-700">
+                        <p>Je kunt betalen met iDEAL, PayPal, Creditcard of contant aan de deur.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- === FOOTER / HTML LANDMARK (Contentinfo) === -->
+    <footer role="contentinfo" class="bg-gray-800 text-white mt-8">
+        <div class="container mx-auto p-6 text-center">
+            <p>&copy; 2025 Thuisbezorgd.nl - Goede Versie</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Javascript voor de uitklapbare FAQ
+            const faqButtons = document.querySelectorAll('#faq-heading + .space-y-2 button[aria-expanded]');
+            faqButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const isExpanded = button.getAttribute('aria-expanded') === 'true';
+                    button.setAttribute('aria-expanded', !isExpanded);
+                    const contentPanel = document.getElementById(button.getAttribute('aria-controls'));
+                    if (contentPanel) {
+                        contentPanel.style.display = isExpanded ? 'none' : 'block';
+                    }
+                });
+            });
+
+            // Javascript for the accessible tabs
+            const tablist = document.querySelector('[role="tablist"]');
+            if (tablist) {
+                const tabs = tablist.querySelectorAll('[role="tab"]');
+
+                const switchTab = (newTab) => {
+                    const activePanelId = newTab.getAttribute('aria-controls');
+                    
+                    tabs.forEach(tab => {
+                        tab.setAttribute('aria-selected', 'false');
+                        tab.setAttribute('tabindex', '-1');
+                        tab.classList.remove('text-orange-600', 'border-orange-600');
+                        tab.classList.add('text-gray-500', 'border-transparent');
+                        
+                        const panel = document.getElementById(tab.getAttribute('aria-controls'));
+                        if (panel) panel.classList.add('hidden');
+                    });
+
+                    newTab.setAttribute('aria-selected', 'true');
+                    newTab.setAttribute('tabindex', '0');
+                    newTab.classList.add('text-orange-600', 'border-orange-600');
+                    newTab.classList.remove('text-gray-500', 'border-transparent');
+
+                    const activePanel = document.getElementById(activePanelId);
+                    if (activePanel) {
+                        activePanel.classList.remove('hidden');
+                    }
+                };
+
+                tablist.addEventListener('click', (e) => {
+                    const clickedTab = e.target.closest('[role="tab"]');
+                    if (clickedTab) {
+                        switchTab(clickedTab);
+                    }
+                });
+
+                tablist.addEventListener('keydown', (e) => {
+                    const currentTab = e.target.closest('[role="tab"]');
+                    if (!currentTab) return;
+                    
+                    let index = Array.prototype.indexOf.call(tabs, currentTab);
+                    let nextTab;
+
+                    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        index = (index + 1) % tabs.length;
+                        nextTab = tabs[index];
+                        nextTab.focus();
+                    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        index = (index - 1 + tabs.length) % tabs.length;
+                        nextTab = tabs[index];
+                        nextTab.focus();
+                    } else if (e.key === 'Home') {
+                        e.preventDefault();
+                        nextTab = tabs[0];
+                        nextTab.focus();
+                    } else if (e.key === 'End') {
+                        e.preventDefault();
+                        nextTab = tabs[tabs.length - 1];
+                        nextTab.focus();
+                    } else if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        switchTab(currentTab);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+
